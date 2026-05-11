@@ -5,8 +5,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.ubayadev.todoapp.R
 import com.ubayadev.todoapp.databinding.FragmentTodoListBinding
+import com.ubayadev.todoapp.viewmodel.ListTodoViewModel
 
 /**
  * A simple [Fragment] subclass.
@@ -15,6 +21,8 @@ import com.ubayadev.todoapp.databinding.FragmentTodoListBinding
  */
 class TodoListFragment : Fragment() {
     private lateinit var binding: FragmentTodoListBinding
+    private lateinit var viewModel: ListTodoViewModel
+    private val todoListAdapter  = TodoListAdapter(arrayListOf())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,5 +41,45 @@ class TodoListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel = ViewModelProvider(this).get(ListTodoViewModel::class.java)
+        viewModel.refresh()
+
+        binding.recViewTodo.layoutManager = LinearLayoutManager(context)
+        binding.recViewTodo.adapter = todoListAdapter
+
+        binding.btnFab.setOnClickListener {
+            val action = TodoListFragmentDirections.actionCreateToDo()
+            it.findNavController().navigate(action)
+        }
+
+        observeViewModel()
+    }
+
+    fun observeViewModel() {
+        viewModel.todoLD.observe(viewLifecycleOwner, Observer {
+            todoListAdapter.updateTodoList(it)
+            if (it.isEmpty()) {
+                binding.recViewTodo.visibility = View.GONE
+                binding.txtError.text = "Your todo still empty."
+            } else {
+                binding.recViewTodo.visibility = View.VISIBLE
+            }
+        })
+
+        viewModel.loadingLD.observe(viewLifecycleOwner, Observer {
+            if(it == false) {
+                binding.progressLoad.visibility = View.GONE
+            } else {
+                binding.progressLoad.visibility = View.VISIBLE
+            }
+        })
+
+        viewModel.todoLoadErrorLD.observe(viewLifecycleOwner, Observer {
+            if(it == false) {
+                binding.txtError.visibility = View.GONE
+            } else {
+                binding.txtError.visibility = View.VISIBLE
+            }
+        })
     }
 }

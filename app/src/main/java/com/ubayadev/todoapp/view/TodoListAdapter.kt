@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.ubayadev.todoapp.databinding.TodoItemLayoutBinding
 import com.ubayadev.todoapp.model.Todo
 
-class TodoListAdapter(val todoList:ArrayList<Todo>)
+class TodoListAdapter(val todoList:ArrayList<Todo>, val listener: TodoItemListener)
     : RecyclerView.Adapter<TodoListAdapter.TodoViewHolder>() {
     class TodoViewHolder(var binding: TodoItemLayoutBinding):
         RecyclerView.ViewHolder(binding.root)
@@ -19,6 +19,13 @@ class TodoListAdapter(val todoList:ArrayList<Todo>)
 
     override fun onBindViewHolder(holder: TodoViewHolder, position: Int) {
         holder.binding.checkTask.text = todoList[position].title
+        holder.binding.checkTask.setOnCheckedChangeListener { btn, isChecked ->
+            if (btn.isPressed && isChecked) {
+                listener.onTodoChecked(todoList[position])
+            }
+        }
+        holder.binding.checkTask.isChecked = false
+
     }
 
     fun updateTodoList(newTodoList: List<Todo>) {

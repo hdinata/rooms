@@ -12,6 +12,7 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ubayadev.todoapp.R
 import com.ubayadev.todoapp.databinding.FragmentTodoListBinding
+import com.ubayadev.todoapp.model.Todo
 import com.ubayadev.todoapp.viewmodel.ListTodoViewModel
 
 /**
@@ -19,10 +20,14 @@ import com.ubayadev.todoapp.viewmodel.ListTodoViewModel
  * Use the [TodoListFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class TodoListFragment : Fragment() {
+class TodoListFragment : Fragment(), TodoItemListener {
     private lateinit var binding: FragmentTodoListBinding
     private lateinit var viewModel: ListTodoViewModel
-    private val todoListAdapter  = TodoListAdapter(arrayListOf())
+    private val todoListAdapter  = TodoListAdapter(arrayListOf(), this)
+
+    override fun onTodoChecked(todo: Todo) {
+        viewModel.clearTask(todo)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

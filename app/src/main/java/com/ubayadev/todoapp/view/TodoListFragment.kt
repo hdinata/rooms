@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.ubayadev.todoapp.R
+import com.ubayadev.todoapp.databinding.FragmentTodoListBinding
 
 /**
  * A simple [Fragment] subclass.
@@ -13,6 +14,7 @@ import com.ubayadev.todoapp.R
  * create an instance of this fragment.
  */
 class TodoListFragment : Fragment() {
+    private lateinit var binding: FragmentTodoListBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,8 +27,8 @@ class TodoListFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_todo_list, container, false)
+        binding = FragmentTodoListBinding.inflate(inflater,container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
